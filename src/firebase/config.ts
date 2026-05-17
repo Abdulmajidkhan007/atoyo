@@ -4,12 +4,13 @@ import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'demo-api-key',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'atoyo-demo.firebaseapp.com',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'atoyo-demo',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'atoyo-demo.appspot.com',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '123456789',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:123456789:web:abcdef',
+  apiKey: "AIzaSyC1IRhd9DgOekIOWLW1kxNtizyG2ojKocs",
+  authDomain: "atoyo-52eba.firebaseapp.com",
+  projectId: "atoyo-52eba",
+  storageBucket: "atoyo-52eba.firebasestorage.app",
+  messagingSenderId: "957435369043",
+  appId: "1:957435369043:web:bec968f15758d3745898a6",
+  measurementId: "G-9KQ2TW3JBW"
 }
 
 export const app = initializeApp(firebaseConfig)
