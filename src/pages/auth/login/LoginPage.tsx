@@ -51,8 +51,17 @@ export default function LoginPage() {
       await loginWithGoogle()
       toast.success('Google orqali kirildi!')
       navigate(from, { replace: true })
-    } catch {
-      toast.error('Google orqali kirishda xatolik')
+    } catch (err: unknown) {
+      const error = err as { code?: string }
+      if (error.code === 'auth/popup-closed-by-user') {
+        toast.error('Oyna yopildi. Qayta urinib ko\'ring')
+      } else if (error.code === 'auth/popup-blocked') {
+        toast.error('Popup bloklandi. Brauzer sozlamalarini tekshiring')
+      } else if (error.code === 'auth/unauthorized-domain') {
+        toast.error('Domen ruxsat etilmagan. Firebase Console\'da domenni qo\'shing')
+      } else {
+        toast.error('Google orqali kirishda xatolik yuz berdi')
+      }
     } finally {
       setGoogleLoading(false)
     }

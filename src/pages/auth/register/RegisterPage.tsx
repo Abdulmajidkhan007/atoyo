@@ -4,9 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion } from 'framer-motion'
-import { useAppDispatch } from '@/store'
-import { setOtpEmail } from '@/features/auth/authSlice'
-import { loginWithGoogle } from '@/firebase/auth'
+import { registerWithEmail, loginWithGoogle } from '@/firebase/auth'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import toast from 'react-hot-toast'
@@ -25,7 +23,6 @@ type FormData = z.infer<typeof schema>
 
 export default function RegisterPage() {
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
 
@@ -36,24 +33,20 @@ export default function RegisterPage() {
   const onSubmit = async (data: FormData) => {
     setLoading(true)
     try {
-      // OTP yuborishdan oldin ma'lumotlarni session storage'ga saqlaymiz
-      sessionStorage.setItem('otp_pending', JSON.stringify({
-        email: data.email,
-        password: data.password,
-        displayName: data.displayName,
-        code: Math.floor(100000 + Math.random() * 900000).toString(),
-        expiresAt: Date.now() + 60000,
-      }))
-      dispatch(setOtpEmail(data.email))
-
-      // Haqiqiy loyihada bu email orqali yuboriladi (Cloud Functions orqali)
-      toast.success(`OTP kodi ${data.email} manziliga yuborildi (demo: konsolga qarang)`)
-      const pending = JSON.parse(sessionStorage.getItem('otp_pending') || '{}')
-      console.info('Demo OTP kod:', pending.code)
-
-      navigate('/verify-otp')
-    } catch {
-      toast.error('Ro\'yxatdan o\'tishda xatolik yuz berdi')
+      await registerWithEmail(data.email, data.password, data.displayName)
+      toast.success('Muvaffaqiyatli ro\'yxatdan o\'tildi!')
+      navigate('/')
+    } catch (err: unknown) {
+      const error = err as { code?: string }
+      if (error.code === 'auth/email-already-in-use') {
+        toast.error('Bu email allaqachon ro\'yxatdan o\'tgan')
+      } else if (error.code === 'auth/weak-password') {
+        toast.error('Parol juda oddiy, kuchliroq parol kiriting')
+      } else if (error.code === 'auth/invalid-email') {
+        toast.error('Email manzil noto\'g\'ri')
+      } else {
+        toast.error('Xatolik yuz berdi. Qayta urinib ko\'ring')
+      }
     } finally {
       setLoading(false)
     }
@@ -65,8 +58,17 @@ export default function RegisterPage() {
       await loginWithGoogle()
       toast.success('Muvaffaqiyatli ro\'yxatdan o\'tildi!')
       navigate('/')
-    } catch {
-      toast.error('Google orqali kirishda xatolik')
+    } catch (err: unknown) {
+      const error = err as { code?: string }
+      if (error.code === 'auth/popup-closed-by-user') {
+        toast.error('Oyna yopildi. Qayta urinib ko\'ring')
+      } else if (error.code === 'auth/popup-blocked') {
+        toast.error('Popup bloklandi. Brauzer sozlamalarini tekshiring')
+      } else if (error.code === 'auth/unauthorized-domain') {
+        toast.error('Domen ruxsat etilmagan. Firebase Console\'da domenni qo\'shing')
+      } else {
+        toast.error('Google orqali kirishda xatolik yuz berdi')
+      }
     } finally {
       setGoogleLoading(false)
     }
