@@ -1,73 +1,93 @@
-# React + TypeScript + Vite
+# ATOYO — Premium Santexnika Platformasi
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+O'zbekistondagi premium santexnika mahsulotlari uchun to'liq e-commerce veb-sayt. Firebase backend, real autentifikatsiya, admin panel va Telegram integratsiyasi bilan jihozlangan.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Texnologiya | Maqsad |
+|---|---|
+| React 19 + TypeScript | UI framework |
+| Vite 6 | Build tool |
+| TailwindCSS v4 | Styling |
+| Redux Toolkit | Global state |
+| React Router DOM v7 | Routing |
+| Framer Motion | Animatsiyalar |
+| Firebase (Auth, Firestore, Storage) | Backend |
+| React Hook Form + Zod | Forma validatsiya |
+| Swiper | Mahsulot gallery |
+| @react-google-maps/api | Yetkazib berish xaritasi |
+| Axios | HTTP client |
 
-## React Compiler
+## Sahifalar
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Bosh sahifa, Do'kon, Mahsulot detail
+- Savatcha, Sevimlilar, Buyurtma berish (Google Maps)
+- Blog, Biz haqimizda, Aloqa, FAQ, Yetkazib berish, Kafolat
+- Login, Ro'yxatdan o'tish
+- Foydalanuvchi dashboard (profil, buyurtmalar)
+- Admin panel (mahsulotlar, buyurtmalar, kategoriyalar, blog, xabarlar)
 
-## Expanding the ESLint configuration
+## Ishga tushirish
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev       # http://localhost:5173
+npm run build     # production build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Muhit o'zgaruvchilari
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+`.env` faylini yarating:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+VITE_FIREBASE_API_KEY=...
+VITE_FIREBASE_AUTH_DOMAIN=...
+VITE_FIREBASE_PROJECT_ID=...
+VITE_FIREBASE_STORAGE_BUCKET=...
+VITE_FIREBASE_MESSAGING_SENDER_ID=...
+VITE_FIREBASE_APP_ID=...
+
+VITE_TELEGRAM_BOT_TOKEN=...
+VITE_TELEGRAM_CHAT_ID=...
+
+VITE_GOOGLE_MAPS_API_KEY=...
 ```
+
+## Netlify Deploy
+
+Build sozlamalari:
+- **Build command:** `npm run build`
+- **Publish directory:** `dist`
+- **Branch:** `claude/add-claude-documentation-cp7B1`
+
+Firebase Authentication'da quyidagilarni yoqing:
+- Email/Password
+- Google
+
+Firebase Console → Authentication → Settings → Authorized domains ga Netlify domeningizni qo'shing.
+
+## Autentifikatsiya
+
+- Email/parol ro'yxatdan o'tish va kirish
+- Google OAuth
+- Role-based access: `user` va `admin`
+- Admin huquqi: Firestore'da `users/{uid}.role = 'admin'`
+
+## Buyurtma oqimi
+
+```
+Cart → Checkout (Google Maps) → Firestore'ga saqlash
+→ Telegram guruhga xabar → Cart tozalanadi
+```
+
+## Telegram integratsiya
+
+Yangi buyurtma, blog post va aloqa xabarlari avtomatik Telegram guruhga yuboriladi.
+
+## Telegram integratsiya
+
+| Funksiya | Tavsif |
+|---|---|
+| `sendOrderToTelegram` | Yangi buyurtma bildirishnomasi |
+| `sendPostToTelegram` | Blog post (rasm bilan) |
+| `sendContactToTelegram` | Aloqa xabari |
